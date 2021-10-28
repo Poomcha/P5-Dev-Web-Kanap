@@ -2,8 +2,7 @@
 const apiAdress = "http://localhost:3000/api/products";
 // Élément parent de l'HTML à insérer (les produits).
 const parent = document.getElementById("items");
-// Array, contiendra les produits
-let productList = [];
+
 
 /**
  * Envoie une requête à l'API en utilisant fetch,
@@ -11,34 +10,28 @@ let productList = [];
  * tableau d'objet.
  */
 async function receive() {
-    await fetch(apiAdress)
+    return await fetch(apiAdress)
         .then(function(response) {
             if (response.ok) {return response.json();}
         })
         .then(function(data) {
-            productList = data;
-            console.log("Array productList récupéré avec fetch() : " + productList);
-            console.log(productList);
+            return data;
         })
         .catch(function(err) {console.log(err)});
 }
 
 /**
  * Crée l'HTML à insérer dans le DOM grâce à un littéral de gabarit.
- * @param {String} productId
- * @param {String} imageUrl
- * @param {String} altText
- * @param {String} productName
- * @param {String} desc
+ * @param {Object[]} item
  * @return {String}
  */
-function createHTMLProduct(productId, imgURL, altText, productName, desc) {
+function createHTMLProduct(item) {
     const model = 
-    `<a href="./product.html?id=${productId}">
+    `<a href="./product.html?id=${item._id}">
         <article>
-            <img src="${imgURL}" alt="${altText}">
-            <h3 class="productName">${productName}</h3>
-            <p class="productDescription">${desc}</p>
+            <img src="${item.imageUrl}" alt="${item.altTxt}">
+            <h3 class="productName">${item.name}</h3>
+            <p class="productDescription">${item.description}</p>
         </article>
     </a>`;
     return model;
@@ -52,13 +45,14 @@ function createHTMLProduct(productId, imgURL, altText, productName, desc) {
  * @return {Object[]}
  */
 async function setHTMLAttribute() {
-    await receive();
+    const products = await receive();
+    console.log(products);
     // Array, contiendra l'HTML à intégrer sous forme de String.
-    let htmlToPublish = [];
-    for(let product of productList) {
-        htmlToPublish.push(createHTMLProduct(product._id, product.imageUrl, product.altTxt, product.name, product.description));
+    const htmlToPublish = [];
+    for(product of products) {
+        htmlToPublish.push(createHTMLProduct(product));
     }
-    console.log("\n\Array du HTML à intégrer : \n\n\n" + htmlToPublish);
+    console.log("\n\nArray du HTML à intégrer : \n\n\n" + htmlToPublish);
     return htmlToPublish;
 }
 
