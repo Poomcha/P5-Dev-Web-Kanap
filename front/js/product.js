@@ -1,3 +1,5 @@
+// Intéger l'HTML :
+
 // Objet URL, contient les données de l'URL de la page courante.
 const currentURL = new URL(document.location.href);
 // String, contient l'URL de la page produit grâce à recupID.
@@ -70,3 +72,141 @@ async function publishHTML() {
 }
 
 publishHTML();
+
+// Ajouter des éléments au panier : 
+
+// Bouton d'ajout au panier.
+const addCartBtn = document.getElementById("addToCart");
+const cart = localStorage;
+
+
+/**
+ * Récupère la valeur actuelle d'un bloc select.
+ * @param {String} selectId
+ * @return {String}
+ */ 
+function getSelectedValue(selectId) {
+    const select = document.getElementById(selectId);
+    return select.options[select.selectedIndex].value;
+}
+
+/**
+ * Valide les entrées de l'utilisateur.
+ * @param {Object[]} item
+ * @return {Boolean}
+ */
+function validateAdd(item) {
+    const [, color, quantity] = item;
+    console.log("Couleur : " + color + ", Quantity : " + quantity);
+    const colors = product.colors;
+    if (!colors.find(element => element === color)) {
+        alert("Veuillez choisir une couleur.")
+        return false
+    }
+    if((quantity < 1) || (quantity > 100)) {
+        alert("Choisissez une quantité entre 1 et 100.")
+        return false;
+    }
+    return true;
+}
+
+/**
+ * Vérifie si un objet est présent dans le localStorage grâce à son ID
+ * et sa couleur, retourne false si elle n'y est pas, l'indice à laquelle 
+ * elle est présente sinon.
+ * @param {Object[]} item 
+ * @returns {(Boolean|Number)}
+ */
+function checkLocalStorage(item) {
+    const [id, color, ] = item;
+    // console.log("id : " + id + " Couleur : " + color);
+    // console.log("Taille du localStorage avant ajout : " + cart.length);
+    // Le panier n'existe pas :
+    if (cart.length == 0) {
+        // console.log("Le panier n'existe pas encore.")
+        return false;
+    }
+    // Le panier existe :
+    else {
+        // console.log("Le panier existe déjà.");
+        let index = 0;
+        // On parcourt le localStorage grâce à ses clés :
+        for (index; index < cart.length; index++) {
+            const [idInCart, colorInCart,] = JSON.parse(cart[index]);
+            // L'ID et la couleur sont les mêmes : 
+            if((idInCart == id) && (colorInCart == color)) {
+                return [true, index];
+            }
+        }
+        return false;
+    }
+}
+
+/**
+ * Récupère la quantité d'un item stockée dans le localStorage
+ * grâce à sa clé.
+ * @param {Number} key
+ * @returns {Number} 
+ */
+function quantityInStock (key) {
+    const [,,quantity] = JSON.parse(cart[key]);
+    return quantity;
+}
+
+/**
+ * Change la quantité d'un item dans le localStorage s'il y est déjà.
+ * @param {Number} key
+ * @param {Number} quantity
+ */
+function updateQuantity (key, quantity) {
+    const qInitial = parseInt(quantityInStock(key));
+    const qUpdated = qInitial + parseInt(quantity);
+    const [id, color,] = JSON.parse(cart[key]);
+    cart.removeItem(key);
+    cart.setItem(cart.length++, JSON.stringify([id, color, qUpdated]));
+
+}
+
+/**
+ * Ajoute les données au localStorage si l'item n'y est pas déjà,
+ * sinon incrémente la quantité de l'item.
+ * @param {Object[]} item
+ */
+function addtoCart(item) {
+    console.log(checkLocalStorage(item));
+    if (checkLocalStorage(item)[0]) {
+        console.log("Objet déjà présent.");
+        const [,key] = checkLocalStorage(item);
+        const [,,quantity] = item
+        updateQuantity(key, quantity);
+    }
+    else {
+        cart.setItem(cart.length++, JSON.stringify(item));
+    }
+}
+
+// localStorage.clear();
+
+addCartBtn.addEventListener("click", function() {
+    let item = [];
+    // Récupère l'id de la page.
+    item.push(recupID(currentURL));
+    console.log("ID onclick : " + item[0]);
+    // Récupère la couleur de l'item.
+    item.push(getSelectedValue("colors"));
+    console.log("Couleur onclick : " + item[1]);
+    // Récupère le nombre d'article.
+    item.push(document.getElementById("quantity").value);
+    console.log("Quantité onclick : " + item[2]);
+
+    if (validateAdd(item)) {
+        console.log("Panier valide.");
+        console.log("Item à ajouter au panier : " + item);
+        addtoCart(item);
+
+    }
+    console.log(cart);
+    console.log("\n\n\n");
+    // console.log("Taille du localStorage après ajout : " + localStorage.length + "\n\n\n");
+});
+
