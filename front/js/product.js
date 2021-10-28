@@ -4,8 +4,7 @@
 const currentURL = new URL(document.location.href);
 // String, contient l'URL de la page produit grâce à recupID.
 const apiAdressById = "http://localhost:3000/api/products/" + recupID(currentURL);
-// Objet, contiendra les spécificités du prduit.
-let product = {};
+
 
 console.log("URL de la page : " + currentURL);
 
@@ -33,14 +32,12 @@ function recupID(url) {
  */
 async function receiveById() {
     // console.log(id);
-    await fetch(apiAdressById)
+    return await fetch(apiAdressById)
         .then(function(response) {
             if (response.ok) {return response.json();}
         })
         .then(function(data) {
-            product = data;
-            console.log("Array product récupéré de la Promise envoyé par fetch() : " + product);
-            console.log(product);
+            return data;
         })
         .catch(function(err) {console.log(err)});
 }
@@ -49,7 +46,7 @@ async function receiveById() {
  * Insère l'HTML dans le DOM
  */
 async function publishHTML() {
-    await receiveById();
+    const product = await receiveById();
     // Change le titre de la page.
     document.getElementsByTagName("title")[0].textContent = product.name;
     // Intègre l'image de la page par son URL.
@@ -96,7 +93,8 @@ function getSelectedValue(selectId) {
  * @param {Object[]} item
  * @return {Boolean}
  */
-function validateAdd(item) {
+async function validateAdd(item) {
+    const product = await receiveById();
     const [, color, quantity] = item;
     console.log("Couleur : " + color + ", Quantity : " + quantity);
     const colors = product.colors;
