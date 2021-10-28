@@ -75,8 +75,9 @@ publishHTML();
 
 // Ajouter des éléments au panier : 
 
-// Bouton d'ajout au panier.
+// Bouton d'ajout au panier
 const addCartBtn = document.getElementById("addToCart");
+// localStorage
 const cart = localStorage;
 
 
