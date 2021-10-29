@@ -1,15 +1,16 @@
 // Intégration des données du panier :
 
-// Adresse URL de l'API.
+// Adresse URL de l'API
 const apiAdress = "http://localhost:3000/api/products";
-// Élément parent de l'HTML à insérer (les produits).
-const parent = document.getElementById("cart__items");
+// Élément parent de l'HTML à insérer (les produits)
+const panierParent = document.getElementById("cart__items");
 // localStorage
 const cart = localStorage;
-// Nombre d'articles total
-let totalArticle = 0;
-// Prix total
-let totalPrice = 0;
+// Élment à insérer pour le total du nombre d'articles
+const totalArticle = document.getElementById("totalQuantity");
+// Élément à insérer pour le total du prix 
+const totalPrice = document.getElementById("totalPrice");
+
 
 /**
  * Envoie une requête à l'API en utilisant fetch,
@@ -164,14 +165,70 @@ function getTotalPrice() {
  */
 async function publishHTML () {
     // Intégration du panier :
-    parent.innerHTML = await createHTML();
+    panierParent.innerHTML = await createHTML();
     // Intégration du total d'article / prix :
-    document.getElementById("totalQuantity").textContent = getTotalArticles();
-    document.getElementById("totalPrice").textContent = getTotalPrice();
+    totalArticle.textContent = getTotalArticles();
+    totalPrice.textContent = getTotalPrice();
 }
-
-publishHTML();
 
 
 // Possibilité de modification / suppression :
+
+/**
+ * Retourne l'ID de l'élément grâce à Element.closest().
+ * @param {Object{}} element
+ * @return {String}
+ */
+function getID (element) {
+    return element.closest(".cart__item").dataset.id;
+}
+
+/**
+ * Retourne la couleur de l'élément.
+ * @param {Object{}} element 
+ */
+function getColor(element) {
+    const parent =  element.closest(".cart__item__content");
+    const parentChildText = parent.querySelector("h2").innerText;
+    const splitText = parentChildText.split(' ');
+    return splitText[splitText.length - 1];
+}
+
+/**
+ * Modifie le panier à partir de l'ID d'un item et de quantité
+ * @param {Object[]} item
+ */
+function modifyCart (item) {
+    const [id, color, quantity] = item;
+    let i = 0;
+    for (i; i < cart.length; i++) {
+        const [idCart, colorCart, qCart] = JSON.parse(cart[i]);
+        if ((id == idCart) && (color == colorCart)) {
+            
+        }
+    }
+}
+
+async function cartMod () {
+    await publishHTML();
+
+    // Élément sur lequel on écoute le chgt
+    const quantityChanger = document.querySelectorAll(".itemQuantity");
+    let i = 0;
+    for (i; i < cart.length; i++) {
+        // console.log(quantityChanger);
+        // console.log(quantityChanger[i].value);
+        // console.log(getColor(quantityChanger[i]));
+        quantityChanger[i].addEventListener('input', function() {
+            // console.log(getClosestID(this));
+            // let input = this.value;
+            // console.log(input);
+            modifyCart([getID(this), getColor(this), this.value]);
+
+        });
+    }  
+}
+
+cartMod();
+
 
