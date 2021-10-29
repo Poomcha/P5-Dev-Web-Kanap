@@ -98,13 +98,25 @@ async function validateAdd(item) {
     const [, color, quantity] = item;
     console.log("Couleur : " + color + ", Quantity : " + quantity);
     const colors = product.colors;
+    // Teste si la couleur est renseignée :
     if (!colors.find(element => element === color)) {
         alert("Veuillez choisir une couleur.")
         return false
     }
+    // Teste si la quantité est comprise entre 1 et 100 :
     if((quantity < 1) || (quantity > 100)) {
         alert("Choisissez une quantité entre 1 et 100.")
         return false;
+    }
+    // Teste si la quantité déjà en stock + la quantité à ajouter du même item 
+    // ne va pas dépasser 100 : 
+    if (checkLocalStorage(item)[0]) {
+        const [,,quantityInCart] = JSON.parse(cart[checkLocalStorage(item)[1]]);
+        if (parseInt(quantityInCart) + parseInt(quantity) > 100) {
+            const qAuthorised = 100 - parseInt(quantityInCart);
+            alert("Vous avez déjà " + quantityInCart + " items, vous pouvez en rajouter " + qAuthorised + " au maximum.");
+            return false;
+        }
     }
     return true;
 }
@@ -112,12 +124,12 @@ async function validateAdd(item) {
 /**
  * Vérifie si un objet est présent dans le localStorage grâce à son ID
  * et sa couleur, retourne false si elle n'y est pas, l'indice à laquelle 
- * elle est présente sinon.
+ * elle est présente sinon, et contrôle si le totale d'item est < 100.
  * @param {Object[]} item 
  * @returns {(Boolean|Number)}
  */
 function checkLocalStorage(item) {
-    const [id, color, ] = item;
+    const [id, color, quantityAdd] = item;
     // console.log("id : " + id + " Couleur : " + color);
     // console.log("Taille du localStorage avant ajout : " + cart.length);
     // Le panier n'existe pas :
@@ -163,7 +175,6 @@ function updateQuantity (key, quantity) {
     const [id, color,] = JSON.parse(cart[key]);
     cart.removeItem(key);
     cart.setItem(cart.length++, JSON.stringify([id, color, qUpdated]));
-
 }
 
 /**
@@ -186,8 +197,8 @@ function addtoCart(item) {
 
 // localStorage.clear();
 
-addCartBtn.addEventListener("click", function() {
-    let item = [];
+addCartBtn.addEventListener("click", async function() {
+    const item = [];
     // Récupère l'id de la page.
     item.push(recupID(currentURL));
     console.log("ID onclick : " + item[0]);
@@ -198,7 +209,7 @@ addCartBtn.addEventListener("click", function() {
     item.push(document.getElementById("quantity").value);
     console.log("Quantité onclick : " + item[2]);
 
-    if (validateAdd(item)) {
+    if (await validateAdd(item)) {
         console.log("Panier valide.");
         console.log("Item à ajouter au panier : " + item);
         addtoCart(item);
