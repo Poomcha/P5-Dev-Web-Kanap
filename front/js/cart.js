@@ -1,9 +1,15 @@
+// Intégration des données du panier :
+
 // Adresse URL de l'API.
 const apiAdress = "http://localhost:3000/api/products";
 // Élément parent de l'HTML à insérer (les produits).
 const parent = document.getElementById("cart__items");
 // localStorage
 const cart = localStorage;
+// Nombre d'articles total
+let totalArticle = 0;
+// Prix total
+let totalPrice = 0;
 
 /**
  * Envoie une requête à l'API en utilisant fetch,
@@ -88,7 +94,7 @@ function createHTMLModel(data) {
             <img src="${imageUrl}" alt="${altTxt}">
         </div>
         <div class="cart__item__content">
-            <div class="cart__item__content_titlePrice">
+            <div class="cart__item__content__titlePrice">
                 <h2>${name} ${color}</h2>
                 <p>${price} €</p>
             </div>
@@ -108,7 +114,7 @@ function createHTMLModel(data) {
 }
 
 /**
- * Crée tout l'HTML à intégrer.
+ * Crée l'HTML du panier à intégrer.
  * @return {String} 
  */
 async function createHTML() {
@@ -121,10 +127,51 @@ async function createHTML() {
 }
 
 /**
+ * Retourne le nombre total d'articles dans le panier.
+ * @returns {Number}
+ */
+function getTotalArticles() {
+    let total = 0;
+    let i = 0;
+    for (i; i < cart.length; i++) {
+        const [,,quantity] = JSON.parse(cart[i]);
+        total += parseInt(quantity);
+    }
+    return total;
+}
+
+/**
+ * Retourne le prix total.
+ * @returns {Number}
+ */
+function getTotalPrice() {
+    const pricesCtn = document.querySelectorAll(".cart__item__content__titlePrice > p");
+    let prices = 0;
+    let i = 0;
+    for(p of pricesCtn) {
+        const price = parseInt(p.innerText.replace("€", ""));
+        // console.log(price);
+        const [,,quantity] = JSON.parse(cart[i]);
+        i++;
+        prices += parseInt(quantity) * price;
+    }
+    // console.log(prices);
+    return prices;
+}
+
+/**
  * Intègre l'HTML dans le DOM.
  */
 async function publishHTML () {
+    // Intégration du panier :
     parent.innerHTML = await createHTML();
+    // Intégration du total d'article / prix :
+    document.getElementById("totalQuantity").textContent = getTotalArticles();
+    document.getElementById("totalPrice").textContent = getTotalPrice();
 }
 
 publishHTML();
+
+
+// Possibilité de modification / suppression :
+
