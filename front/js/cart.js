@@ -38,14 +38,14 @@ const totalPrice = document.getElementById("totalPrice");
 
 /**
  * Récupère les données à intégrer de localStorage,
- * retourn un tableau des données contenu dans le localStorage.
+ * retourne un tableau des données contenu dans le localStorage.
  * @return {Object[]}
  */
 function getCart() {
     index = 0;
     const data = [];
     for(index; index < cart.length; index++) {
-        data.push(JSON.parse(cart[index]));
+        data.push(JSON.parse(cart[cart.key(index)]));
     }
     console.log(data);
     return data;
@@ -135,7 +135,7 @@ function getTotalArticles() {
     let total = 0;
     let i = 0;
     for (i; i < cart.length; i++) {
-        const [,,quantity] = JSON.parse(cart[i]);
+        const [,,quantity] = JSON.parse(cart[cart.key(i)]);
         total += parseInt(quantity);
     }
     return total;
@@ -147,14 +147,15 @@ function getTotalArticles() {
  */
 function getTotalPrice() {
     const pricesCtn = document.querySelectorAll(".cart__item__content__titlePrice > p");
+    const quantity = document.querySelectorAll(".itemQuantity");
     let prices = 0;
     let i = 0;
     for(p of pricesCtn) {
         const price = parseInt(p.innerText.replace("€", ""));
         // console.log(price);
-        const [,,quantity] = JSON.parse(cart[i]);
+        // const [,,quantity] = JSON.parse(cart[cart.key(i)]);
+        prices += parseInt(quantity[i].value) * price;
         i++;
-        prices += parseInt(quantity) * price;
     }
     // console.log(prices);
     return prices;
@@ -199,14 +200,44 @@ function getColor(element) {
  * @param {Object[]} item
  */
 function modifyCart (item) {
-    const [id, color, quantity] = item;
+    const [id, color,] = item;
     let i = 0;
     for (i; i < cart.length; i++) {
-        const [idCart, colorCart, qCart] = JSON.parse(cart[i]);
+        const [idCart, colorCart,] = JSON.parse(cart[cart.key(i)]);
         if ((id == idCart) && (color == colorCart)) {
-            
+            cart[i] = JSON.stringify(item)
         }
     }
+}
+
+/**
+ * Supprime un article de localStorage et du DOM.
+ * @param {Object[]} item
+ */
+function supItem(item) {
+    const [id, color] = item;
+    for (let i = 0; i < cart.length; i++) {
+        const  [idCart, colorCart,] = JSON.parse(cart[cart.key(i)]);
+        if ((id == idCart) && (color == colorCart)) {
+            cart.removeItem(cart.key(i));
+            break;
+        } 
+    }
+}
+
+/**
+ * Retourne l'élément parent <article> de l'élément passé en paramètre.
+ * @param {Object{}} element 
+ * @returns {Object{}}
+ */
+function getArticleParent(element) {
+    const allArticle =  document.querySelectorAll(".cart__item");
+    for (let i = 0; i<allArticle.length; i++) {
+        if (element == allArticle[i]) {
+            return element;
+        }
+    }
+    return getArticleParent(element.parentNode);
 }
 
 async function cartMod () {
@@ -214,6 +245,8 @@ async function cartMod () {
 
     // Élément sur lequel on écoute le chgt
     const quantityChanger = document.querySelectorAll(".itemQuantity");
+    // Élément sur lequel on écoute la suppression
+    const sup = document.querySelectorAll(".deleteItem");
     let i = 0;
     for (i; i < cart.length; i++) {
         // console.log(quantityChanger);
@@ -224,7 +257,19 @@ async function cartMod () {
             // let input = this.value;
             // console.log(input);
             modifyCart([getID(this), getColor(this), this.value]);
-
+            totalArticle.textContent = getTotalArticles();
+            totalPrice.textContent = getTotalPrice();
+            // for (let i = 0; i < cart.length; i++) {
+            //     console.log(cart[i]);
+            // }
+        });
+        sup[i].addEventListener('click', function() {
+            supItem([getID(this), getColor(this)]);
+            panierParent.removeChild(this.closest(".cart__item"));
+            totalArticle.textContent = getTotalArticles();
+            totalPrice.textContent = getTotalPrice();
+            // panierParent.removeChild(getArticleParent(this));
+            // document.location.reload();
         });
     }  
 }
