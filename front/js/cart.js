@@ -4,8 +4,6 @@
 const apiAdress = "http://localhost:3000/api/products";
 // Élément parent de l'HTML à insérer (les produits)
 const panierParent = document.getElementById("cart__items");
-// localStorage
-const cart = localStorage;
 // Élment à insérer pour le total du nombre d'articles
 const totalArticle = document.getElementById("totalQuantity");
 // Élément à insérer pour le total du prix 
@@ -29,29 +27,24 @@ const totalPrice = document.getElementById("totalPrice");
         .catch(function(err) {console.log(err)});
 }
 
-// async function testReceive() {
-//     const products = await receive();
-//     console.log(products);
-// }
-
-// testReceive();
-
 /**
- * Récupère les données à intégrer de localStorage,
- * retourne un tableau des données contenu dans le localStorage.
- * @return {Object[]}
+ * Retourne le contenu du panier sous forme de tableau.
+ * @returns {Object[]|Boolean}
  */
-function getCart() {
-    index = 0;
-    const data = [];
-    for(index; index < cart.length; index++) {
-        data.push(JSON.parse(cart[cart.key(index)]));
+ function getCart() {
+    if (localStorage.cart) {
+        return JSON.parse(localStorage.cart);
     }
-    console.log(data);
-    return data;
+    return false;
 }
 
-// getCart();
+/**
+ * Stock le panier entier à jour dans le localStorage
+ * @param {Object[]} cart
+ */
+ function setCart(cart) {
+    localStorage.cart = JSON.stringify(cart);
+}
 
 /**
  * Retourne un tableau des données à intégrer.
@@ -63,7 +56,7 @@ async function dataToIntegrate() {
     const data = [];
     // Parcours le panier :
     for (product of productInCart) {
-        const [id, color, quantity] = product;
+        ({id, color, quantity} = product);
         const dataFromDatas = [];
         dataFromDatas.push(id, color, quantity);
         // Parcours l'ensemble des produits :
@@ -75,11 +68,8 @@ async function dataToIntegrate() {
         }
         data.push(dataFromDatas);
     }
-    console.log(data);
     return data;
 }
-
-// dataToIntegrate();
 
 /**
  * Crée le model à insérer dans le DOM à partir des données
@@ -110,7 +100,6 @@ function createHTMLModel(data) {
             </div>
         </div>
     </article>`
-    console.log(model);
     return model;
 }
 
@@ -132,11 +121,10 @@ async function createHTML() {
  * @returns {Number}
  */
 function getTotalArticles() {
+    const cart = getCart();
     let total = 0;
-    let i = 0;
-    for (i; i < cart.length; i++) {
-        const [,,quantity] = JSON.parse(cart[cart.key(i)]);
-        total += parseInt(quantity);
+    for (product of cart) {
+        total += parseInt(product.quantity);
     }
     return total;
 }
@@ -152,12 +140,9 @@ function getTotalPrice() {
     let i = 0;
     for(p of pricesCtn) {
         const price = parseInt(p.innerText.replace("€", ""));
-        // console.log(price);
-        // const [,,quantity] = JSON.parse(cart[cart.key(i)]);
         prices += parseInt(quantity[i].value) * price;
         i++;
     }
-    // console.log(prices);
     return prices;
 }
 
@@ -200,14 +185,14 @@ function getColor(element) {
  * @param {Object[]} item
  */
 function modifyCart (item) {
-    const [id, color,] = item;
-    let i = 0;
-    for (i; i < cart.length; i++) {
-        const [idCart, colorCart,] = JSON.parse(cart[cart.key(i)]);
-        if ((id == idCart) && (color == colorCart)) {
-            cart[i] = JSON.stringify(item)
+    const [id, color, quantity] = item;
+    const cart = getCart();
+    for (product of cart) {
+        if ((product.id == id) && (product.color == color)) {
+            product.quantity = quantity;
         }
     }
+    setCart(cart);
 }
 
 /**
@@ -215,61 +200,30 @@ function modifyCart (item) {
  * @param {Object[]} item
  */
 function supItem(item) {
+    const cart = getCart();
     const [id, color] = item;
-    for (let i = 0; i < cart.length; i++) {
-        const  [idCart, colorCart,] = JSON.parse(cart[cart.key(i)]);
-        if ((id == idCart) && (color == colorCart)) {
-            cart.removeItem(cart.key(i));
-            break;
-        } 
-    }
-}
-
-/**
- * Retourne l'élément parent <article> de l'élément passé en paramètre.
- * @param {Object{}} element 
- * @returns {Object{}}
- */
-function getArticleParent(element) {
-    const allArticle =  document.querySelectorAll(".cart__item");
-    for (let i = 0; i<allArticle.length; i++) {
-        if (element == allArticle[i]) {
-            return element;
-        }
-    }
-    return getArticleParent(element.parentNode);
+    setCart(cart.filter(product => !((product.id == id) && (product.color == color))));
 }
 
 async function cartMod () {
     await publishHTML();
-
+    const cart = getCart();
     // Élément sur lequel on écoute le chgt
     const quantityChanger = document.querySelectorAll(".itemQuantity");
     // Élément sur lequel on écoute la suppression
     const sup = document.querySelectorAll(".deleteItem");
     let i = 0;
     for (i; i < cart.length; i++) {
-        // console.log(quantityChanger);
-        // console.log(quantityChanger[i].value);
-        // console.log(getColor(quantityChanger[i]));
         quantityChanger[i].addEventListener('input', function() {
-            // console.log(getClosestID(this));
-            // let input = this.value;
-            // console.log(input);
             modifyCart([getID(this), getColor(this), this.value]);
             totalArticle.textContent = getTotalArticles();
             totalPrice.textContent = getTotalPrice();
-            // for (let i = 0; i < cart.length; i++) {
-            //     console.log(cart[i]);
-            // }
         });
         sup[i].addEventListener('click', function() {
             supItem([getID(this), getColor(this)]);
             panierParent.removeChild(this.closest(".cart__item"));
             totalArticle.textContent = getTotalArticles();
             totalPrice.textContent = getTotalPrice();
-            // panierParent.removeChild(getArticleParent(this));
-            // document.location.reload();
         });
     }  
 }

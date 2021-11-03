@@ -200,14 +200,10 @@ addCartBtn.addEventListener("click", async function() {
     const item = {};
     // Récupère l'id de la page.
     item.id = recupID(currentURL);
-    console.log("ID onclick : " + item.id);
     // Récupère la couleur de l'item.
     item.color = getSelectedValue("colors");
-    console.log("Couleur onclick : " + item.color);
     // Récupère le nombre d'article.
     item.quantity = document.getElementById("quantity").value;
-    console.log("Quantité onclick : " + item.quantity);
-
     if (await validateAdd(item)) {
         addtoCart(item);
     }
