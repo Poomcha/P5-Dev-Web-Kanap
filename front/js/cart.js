@@ -230,4 +230,104 @@ async function cartMod () {
 
 cartMod();
 
+// Validation de la commande :
 
+const contact = {};
+// Élément à écouter 
+const formDatas = document.querySelector(".cart__order__form");
+
+
+/**
+ * Change le texte d'un élément grâce à son id.
+ * @param {String} id
+ * @param {String} txt
+ */
+function setInnerText(id, txt) {
+    document.getElementById(id).innerText = txt;
+}
+
+/**
+ * Check si les données entrées par l'utilisateur sont correctes, retourne true si oui
+ * false sinon.
+ * @param {Object{}} contact
+ * @returns {Boolean}
+ */ 
+function checkEntries(contact) {
+    if (localStorage.cart) {
+        const nameMask = /[^A-Za-zÀ-ÿ'\- ]/g;
+        const nameCharAuth = 
+        `Saisie invalide.
+         Caractères autorisés : A-Z a-z À-ÿ`;
+        const addressMask = /\d{1,}[bis|ter]{0,1} [A-Za-z \-\']{3,} [A-Za-z \-\']{2,}/g;
+        const addressFormat = 
+        `Adresse invalide.
+         Format autorisé : 19 Rue des Trucs`;
+        const emailMask = /^[0-9A-Za-z]{1,}[\.\-]{0,1}[A-Za-z0-9]{1,}@[A-Za-z0-9]{1,}[\.\-]{0,1}[A-Za-z0-9]{1,}\.[A-Za-z0-9]{1,}[\.\-]{0,1}[A-Za-z0-9]{1,}$/g;
+        const emailFormat = 
+        `Email invalid.
+         Format autorisé : exemple@mail.com`;
+
+        if (nameMask.test(contact.firstName)) {
+            setInnerText("firstNameErrorMsg", nameCharAuth);
+        }
+        else {setInnerText("firstNameErrorMsg", "");}
+
+        if (nameMask.test(contact.lastName)) {
+            setInnerText("lastNameErrorMsg", nameCharAuth);
+        }
+        else {setInnerText("lastNameErrorMsg", "");}
+
+        if (!contact.address.match(addressMask)) {
+            setInnerText("addressErrorMsg", addressFormat);
+        }
+        else {setInnerText("addressErrorMsg", "");}
+
+        if (nameMask.test(contact.city)) {
+            setInnerText("cityErrorMsg", nameCharAuth);
+        }
+        else {setInnerText("cityErrorMsg", "");}
+
+        if (!contact.email.match(emailMask)) {
+            setInnerText("emailErrorMsg", emailFormat);
+        }
+        else {setInnerText("emailErrorMsg", "");}
+
+        if (nameMask.test(contact.firstName) || nameMask.test(contact.lastName) || nameMask.test(contact.city) || !contact.address.match(addressMask) || !contact.email.match(emailMask)) {
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+    else {
+        alert("Votre panier est vide !\nAjouter des articles avant de commander.")
+        return false;
+    }
+}
+
+/**
+ * Retourne la valeur d'un élément <input>.
+ * @param {String} id
+ * @returns {String}
+ */
+function getValue(id) {
+    return document.getElementById(id).value;
+}
+
+formDatas.addEventListener("submit", function(evnmt) {
+    // Empêche la page de se recharger :
+    evnmt.preventDefault();
+    // Récupère les valeurs des inputs dans un objet contact :
+    const contact = {
+        firstName: getValue("firstName"),
+        lastName: getValue("lastName"),
+        address: getValue("address"),
+        city: getValue("city"),
+        email: getValue("email"),
+    };
+    console.log(contact);
+    // Validation des entrées de l'utilisateur :
+    if(checkEntries(contact)) {
+        localStorage.contact = JSON.stringify(contact);
+    }
+});
