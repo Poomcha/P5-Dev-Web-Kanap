@@ -63,7 +63,7 @@ if (document.location.href === "http://127.0.0.1:5500/front/html/cart.html") {
             // Parcours l'ensemble des produits :
             for (prdt of products) {
                 // Si l'ID correspond on ajoute les autres attributs aux datas
-                if (prdt._id == id) {
+                if (prdt._id === id) {
                     dataFromDatas.push(prdt.name, prdt.price, prdt.imageUrl, prdt.altTxt);
                 }
             }
@@ -189,7 +189,7 @@ if (document.location.href === "http://127.0.0.1:5500/front/html/cart.html") {
         const [id, color, quantity] = item;
         const cart = getCart();
         for (product of cart) {
-            if ((product.id == id) && (product.color == color)) {
+            if ((product.id === id) && (product.color === color)) {
                 product.quantity = quantity;
             }
         }
@@ -203,7 +203,7 @@ if (document.location.href === "http://127.0.0.1:5500/front/html/cart.html") {
     function supItem(item) {
         const cart = getCart();
         const [id, color] = item;
-        setCart(cart.filter(product => !((product.id == id) && (product.color == color))));
+        setCart(cart.filter(product => !((product.id === id) && (product.color === color))));
     }
 
     async function cartMod () {

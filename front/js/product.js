@@ -27,7 +27,6 @@ function recupID(url) {
  * grâce à son id sous la forme d'un objet.
  */
 async function receiveById() {
-    // console.log(id);
     return await fetch(apiAdressById)
         .then(function(response) {
             if (response.ok) {return response.json();}
@@ -142,7 +141,7 @@ async function validateAdd(item) {
 function checkLocalStorage(item) {
     const cart = getCart();
     // Le panier n'existe pas :
-    if (cart.length == 0) {
+    if (cart.length === 0) {
         return false;
     }
     // Le panier existe :
@@ -152,7 +151,7 @@ function checkLocalStorage(item) {
         for (index; index < cart.length; index++) {
             ({id, color} = cart[index])
             // L'ID et la couleur sont les mêmes : 
-            if((id == item.id) && (color == item.color)) {
+            if((id === item.id) && (color === item.color)) {
                 return {in: true, pos: index};
             }
         }

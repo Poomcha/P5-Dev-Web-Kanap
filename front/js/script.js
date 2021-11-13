@@ -46,13 +46,11 @@ function createHTMLProduct(item) {
  */
 async function setHTMLAttribute() {
     const products = await receive();
-    console.log(products);
     // Array, contiendra l'HTML à intégrer sous forme de String.
     const htmlToPublish = [];
     for(product of products) {
         htmlToPublish.push(createHTMLProduct(product));
     }
-    console.log("\n\nArray du HTML à intégrer : \n\n\n" + htmlToPublish);
     return htmlToPublish;
 }
 
@@ -62,7 +60,6 @@ async function setHTMLAttribute() {
 async function publishHTML() {
     const productsHTML = await setHTMLAttribute();
     let htmlToPublish = "";
-    console.log("\n\nString à intégrer : \n\n\n" + productsHTML);
     for(article of productsHTML) {
         htmlToPublish += article;
     }
