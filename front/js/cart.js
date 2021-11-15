@@ -1,4 +1,4 @@
-if (document.location.href === "http://127.0.0.1:5500/front/html/cart.html") {
+if (document.location.pathname === "/front/html/cart.html") {
     // Intégration des données du panier :
 
     // Adresse URL de l'API
@@ -371,6 +371,7 @@ else {
     // Affichage de l'ID de commande :
     let searchParam = new URLSearchParams(new URL(document.location.href).search);
     document.getElementById("orderId").innerText = "\n\n" + searchParam.get("orderid");
+    localStorage.clear();
 }
 
 
