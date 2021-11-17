@@ -1,5 +1,5 @@
 // On teste le pathname de la page pour savoir si on est sur cart.html ou confirmation.html.
-if (document.location.pathname === "/front/html/cart.html") {
+if (document.location.pathname.endsWith("/front/html/cart.html")) {
   // Intégration des données du panier :
 
   // Adresse URL de l'API
