@@ -40,7 +40,7 @@ if (document.location.pathname.endsWith("/front/html/cart.html")) {
     if (localStorage.cart) {
       return JSON.parse(localStorage.cart);
     }
-    return false;
+    return undefined;
   }
 
   /**
@@ -217,27 +217,29 @@ if (document.location.pathname.endsWith("/front/html/cart.html")) {
   }
 
   async function cartMod() {
-    await publishHTML();
     const cart = getCart();
-    // Élément sur lequel on écoute le chgt
-    const quantityChanger = document.querySelectorAll(".itemQuantity");
-    // Élément sur lequel on écoute la suppression
-    const sup = document.querySelectorAll(".deleteItem");
-    let i = 0;
-    // Création d'un Event Listener de modification pour chaque élément du panier.
-    for (i; i < cart.length; i++) {
-      quantityChanger[i].addEventListener("input", function () {
-        modifyCart([getID(this), getColor(this), this.value]);
-        totalArticle.textContent = getTotalArticles();
-        totalPrice.textContent = getTotalPrice();
-      });
-      // Création d'un Event Listener de suppression pour chaque élément du panier.
-      sup[i].addEventListener("click", function () {
-        supItem([getID(this), getColor(this)]);
-        panierParent.removeChild(this.closest(".cart__item"));
-        totalArticle.textContent = getTotalArticles();
-        totalPrice.textContent = getTotalPrice();
-      });
+    if (cart) {
+      await publishHTML();
+      // Élément sur lequel on écoute le chgt
+      const quantityChanger = document.querySelectorAll(".itemQuantity");
+      // Élément sur lequel on écoute la suppression
+      const sup = document.querySelectorAll(".deleteItem");
+      let i = 0;
+      // Création d'un Event Listener de modification pour chaque élément du panier.
+      for (i; i < cart.length; i++) {
+        quantityChanger[i].addEventListener("input", function () {
+          modifyCart([getID(this), getColor(this), this.value]);
+          totalArticle.textContent = getTotalArticles();
+          totalPrice.textContent = getTotalPrice();
+        });
+        // Création d'un Event Listener de suppression pour chaque élément du panier.
+        sup[i].addEventListener("click", function () {
+          supItem([getID(this), getColor(this)]);
+          panierParent.removeChild(this.closest(".cart__item"));
+          totalArticle.textContent = getTotalArticles();
+          totalPrice.textContent = getTotalPrice();
+        });
+      }
     }
   }
 
@@ -245,7 +247,6 @@ if (document.location.pathname.endsWith("/front/html/cart.html")) {
 
   // Validation de la commande :
 
-  const contact = {};
   // Élément à écouter
   const formDatas = document.querySelector(".cart__order__form");
 

@@ -83,7 +83,7 @@ function getCart() {
   if (localStorage.cart) {
     return JSON.parse(localStorage.cart);
   }
-  return false;
+  return undefined;
 }
 
 /**
@@ -155,7 +155,7 @@ async function validateAdd(item) {
 function checkLocalStorage(item) {
   const cart = getCart();
   // Le panier n'existe pas :
-  if (cart.length === 0) {
+  if (!cart) {
     return false;
   }
   // Le panier existe :
@@ -190,9 +190,10 @@ function updateQuantity(pos, quantity) {
  * @param { Object.<id: String, color: String, quantity: String> } item
  */
 function addtoCart(item) {
+  const checkCart = checkLocalStorage(item);
   // Item dans le panier :
-  if (checkLocalStorage(item).in) {
-    updateQuantity(checkLocalStorage(item).pos, item.quantity);
+  if (checkCart.in) {
+    updateQuantity(checkCart.pos, item.quantity);
   }
   // Item pas dans le panier :
   else {
