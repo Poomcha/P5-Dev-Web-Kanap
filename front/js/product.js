@@ -88,7 +88,8 @@ function getCart() {
 
 /**
  * Stock le panier entier à jour dans le localStorage
- * @param { Array.{<colors: Array.<String>, _id: String, name: String, price: Integer,  imageUrl: String, description: String, altTxt: String>} } cart
+ * @param { Array.{<colors: Array.<String>, _id: String, name: String, price: Integer,  imageUrl: String, description: String, altTxt: String>}
+ *  } cart
  */
 function setCart(cart) {
   localStorage.cart = JSON.stringify(cart);
