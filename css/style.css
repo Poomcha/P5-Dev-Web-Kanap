@@ -8,6 +8,17 @@ body {
 	color: white;
 	min-width: 300px;
 }
+
+body::-webkit-scrollbar {
+	width: 5px;
+	background-color: #ffffff;
+}
+
+body::-webkit-scrollbar-thumb {
+	width: 5px;
+	background-color: #3498db;
+}
+
 h1 {
 	font-size: 48px;
 	font-weight: 700;
