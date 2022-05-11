@@ -1,15 +1,98 @@
+const products = [
+  {
+    colors: ['Blue', 'White', 'Black'],
+    _id: '107fb5b75607497b96722bda5b504926',
+    name: 'Kanap Sinopé',
+    price: 1849,
+    imageUrl: 'kanap01.jpeg',
+    description:
+      'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+    altTxt: "Photo d'un canapé bleu, deux places",
+  },
+  {
+    colors: ['Black/Yellow', 'Black/Red'],
+    _id: '415b7cacb65d43b2b5c1ff70f3393ad1',
+    name: 'Kanap Cyllène',
+    price: 4499,
+    imageUrl: 'kanap02.jpeg',
+    description:
+      'Morbi nec erat aliquam, sagittis urna non, laoreet justo. Etiam sit amet interdum diam, at accumsan lectus.',
+    altTxt: "Photo d'un canapé jaune et noir, quattre places",
+  },
+  {
+    colors: ['Green', 'Red', 'Orange'],
+    _id: '055743915a544fde83cfdfc904935ee7',
+    name: 'Kanap Calycé',
+    price: 3199,
+    imageUrl: 'kanap03.jpeg',
+    description:
+      'Pellentesque fermentum arcu venenatis ex sagittis accumsan. Vivamus lacinia fermentum tortor.Mauris imperdiet tellus ante.',
+    altTxt: "Photo d'un canapé d'angle, vert, trois places",
+  },
+  {
+    colors: ['Pink', 'White'],
+    _id: 'a557292fe5814ea2b15c6ef4bd73ed83',
+    name: 'Kanap Autonoé',
+    price: 1499,
+    imageUrl: 'kanap04.jpeg',
+    description:
+      'Donec mattis nisl tortor, nec blandit sapien fermentum at. Proin hendrerit efficitur fringilla. Lorem ipsum dolor sit amet.',
+    altTxt: "Photo d'un canapé rose, une à deux place",
+  },
+  {
+    colors: ['Grey', 'Purple', 'Blue'],
+    _id: '8906dfda133f4c20a9d0e34f18adcf06',
+    name: 'Kanap Eurydomé',
+    price: 2249,
+    imageUrl: 'kanap05.jpeg',
+    description:
+      'Ut laoreet vulputate neque in commodo. Suspendisse maximus quis erat in sagittis. Donec hendrerit purus at congue aliquam.',
+    altTxt: "Photo d'un canapé gris, trois places",
+  },
+  {
+    colors: ['Grey', 'Navy'],
+    _id: '77711f0e466b4ddf953f677d30b0efc9',
+    name: 'Kanap Hélicé',
+    price: 999,
+    imageUrl: 'kanap06.jpeg',
+    description:
+      'Curabitur vel augue sit amet arcu aliquet interdum. Integer vel quam mi. Morbi nec vehicula mi, sit amet vestibulum.',
+    altTxt: "Photo d'un canapé gris, deux places",
+  },
+  {
+    colors: ['Red', 'Silver'],
+    _id: '034707184e8e4eefb46400b5a3774b5f',
+    name: 'Kanap Thyoné',
+    price: 1999,
+    imageUrl: 'kanap07.jpeg',
+    description:
+      'EMauris imperdiet tellus ante, sit amet pretium turpis molestie eu. Vestibulum et egestas eros. Vestibulum non lacus orci.',
+    altTxt: "Photo d'un canapé rouge, deux places",
+  },
+  {
+    colors: ['Pink', 'Brown', 'Yellow', 'White'],
+    _id: 'a6ec5b49bd164d7fbe10f37b6363f9fb',
+    name: 'Kanap orthosie',
+    price: 3999,
+    imageUrl: 'kanap08.jpeg',
+    description:
+      'Mauris molestie laoreet finibus. Aenean scelerisque convallis lacus at dapibus. Morbi imperdiet enim metus rhoncus.',
+    altTxt: "Photo d'un canapé rose, trois places",
+  },
+];
+
 // On teste le pathname de la page pour savoir si on est sur cart.html ou confirmation.html.
-if (document.location.pathname.endsWith("/front/html/cart.html")) {
+if (document.location.pathname.endsWith('/cart.html')) {
   // Intégration des données du panier :
 
   // Adresse URL de l'API
-  const productsAddress = "http://localhost:3000/api/products";
+  const productsAddress = 'http://localhost:3000/api/products';
   // Élément parent de l'HTML à insérer (les produits)
-  const panierParent = document.getElementById("cart__items");
+  const panierParent = document.getElementById('cart__items');
   // Élment à insérer pour le total du nombre d'articles
-  const totalArticle = document.getElementById("totalQuantity");
+  const totalArticle = document.getElementById('totalQuantity');
   // Élément à insérer pour le total du prix
-  const totalPrice = document.getElementById("totalPrice");
+  const totalPrice = document.getElementById('totalPrice');
 
   /**
    * Envoie une requête à l'API en utilisant fetch,
@@ -30,6 +113,10 @@ if (document.location.pathname.endsWith("/front/html/cart.html")) {
       .catch(function (err) {
         console.log(err);
       });
+  }
+
+  function fakeReceive() {
+    return products;
   }
 
   /**
@@ -56,7 +143,8 @@ if (document.location.pathname.endsWith("/front/html/cart.html")) {
    * @returns { Array.{<color: String, _id: String, name: String, price: Integer, imageUrl: String, altTxt: String>} }
    */
   async function dataToIntegrate() {
-    const products = await receive();
+    // const products = await receive();
+    const products = fakeReceive();
     const productInCart = getCart();
     const data = [];
     // Parcours le panier :
@@ -87,7 +175,7 @@ if (document.location.pathname.endsWith("/front/html/cart.html")) {
     const [id, color, quantity, name, price, imageUrl, altTxt] = data;
     const model = `<article class="cart__item" data-id="${id}">
             <div class="cart__item__img">
-                <img src="${imageUrl}" alt="${altTxt}">
+                <img src="./front/public/images/${imageUrl}" alt="${altTxt}">
             </div>
             <div class="cart__item__content">
                 <div class="cart__item__content__titlePrice">
@@ -114,7 +202,7 @@ if (document.location.pathname.endsWith("/front/html/cart.html")) {
    */
   async function createHTML() {
     const data = await dataToIntegrate();
-    let html = "";
+    let html = '';
     for (item of data) {
       html += createHTMLModel(item);
     }
@@ -140,13 +228,13 @@ if (document.location.pathname.endsWith("/front/html/cart.html")) {
    */
   function getTotalPrice() {
     const pricesCtn = document.querySelectorAll(
-      ".cart__item__content__titlePrice > p"
+      '.cart__item__content__titlePrice > p'
     );
-    const quantity = document.querySelectorAll(".itemQuantity");
+    const quantity = document.querySelectorAll('.itemQuantity');
     let prices = 0;
     let i = 0;
     for (p of pricesCtn) {
-      const price = parseInt(p.innerText.replace("€", ""));
+      const price = parseInt(p.innerText.replace('€', ''));
       prices += parseInt(quantity[i].value) * price;
       i++;
     }
@@ -173,7 +261,7 @@ if (document.location.pathname.endsWith("/front/html/cart.html")) {
    */
   function getID(element) {
     // On accède à data-id grâce à dataset.id.
-    return element.closest(".cart__item").dataset.id;
+    return element.closest('.cart__item').dataset.id;
   }
 
   /**
@@ -181,9 +269,9 @@ if (document.location.pathname.endsWith("/front/html/cart.html")) {
    * @param { HTMLElement } element Élément sur écoute
    */
   function getColor(element) {
-    const parent = element.closest(".cart__item__content");
-    const parentChildText = parent.querySelector("h2").innerText;
-    const splitText = parentChildText.split(" ");
+    const parent = element.closest('.cart__item__content');
+    const parentChildText = parent.querySelector('h2').innerText;
+    const splitText = parentChildText.split(' ');
     // Retourne le dernier élément de la liste.
     return splitText[splitText.length - 1];
   }
@@ -221,21 +309,21 @@ if (document.location.pathname.endsWith("/front/html/cart.html")) {
     if (cart) {
       await publishHTML();
       // Élément sur lequel on écoute le chgt
-      const quantityChanger = document.querySelectorAll(".itemQuantity");
+      const quantityChanger = document.querySelectorAll('.itemQuantity');
       // Élément sur lequel on écoute la suppression
-      const sup = document.querySelectorAll(".deleteItem");
+      const sup = document.querySelectorAll('.deleteItem');
       let i = 0;
       // Création d'un Event Listener de modification pour chaque élément du panier.
       for (i; i < cart.length; i++) {
-        quantityChanger[i].addEventListener("input", function () {
+        quantityChanger[i].addEventListener('input', function () {
           modifyCart([getID(this), getColor(this), this.value]);
           totalArticle.textContent = getTotalArticles();
           totalPrice.textContent = getTotalPrice();
         });
         // Création d'un Event Listener de suppression pour chaque élément du panier.
-        sup[i].addEventListener("click", function () {
+        sup[i].addEventListener('click', function () {
           supItem([getID(this), getColor(this)]);
-          panierParent.removeChild(this.closest(".cart__item"));
+          panierParent.removeChild(this.closest('.cart__item'));
           totalArticle.textContent = getTotalArticles();
           totalPrice.textContent = getTotalPrice();
         });
@@ -248,7 +336,7 @@ if (document.location.pathname.endsWith("/front/html/cart.html")) {
   // Validation de la commande :
 
   // Élément à écouter
-  const formDatas = document.querySelector(".cart__order__form");
+  const formDatas = document.querySelector('.cart__order__form');
 
   /**
    * Change le texte d'un élément grâce à son id.
@@ -281,33 +369,33 @@ if (document.location.pathname.endsWith("/front/html/cart.html")) {
             Format autorisé : exemple@mail.com`;
 
       if (nameMask.test(contact.firstName)) {
-        setInnerText("firstNameErrorMsg", nameCharAuth);
+        setInnerText('firstNameErrorMsg', nameCharAuth);
       } else {
-        setInnerText("firstNameErrorMsg", "");
+        setInnerText('firstNameErrorMsg', '');
       }
 
       if (nameMask.test(contact.lastName)) {
-        setInnerText("lastNameErrorMsg", nameCharAuth);
+        setInnerText('lastNameErrorMsg', nameCharAuth);
       } else {
-        setInnerText("lastNameErrorMsg", "");
+        setInnerText('lastNameErrorMsg', '');
       }
 
       if (!contact.address.match(addressMask)) {
-        setInnerText("addressErrorMsg", addressFormat);
+        setInnerText('addressErrorMsg', addressFormat);
       } else {
-        setInnerText("addressErrorMsg", "");
+        setInnerText('addressErrorMsg', '');
       }
 
       if (nameMask.test(contact.city)) {
-        setInnerText("cityErrorMsg", nameCharAuth);
+        setInnerText('cityErrorMsg', nameCharAuth);
       } else {
-        setInnerText("cityErrorMsg", "");
+        setInnerText('cityErrorMsg', '');
       }
 
       if (!contact.email.match(emailMask)) {
-        setInnerText("emailErrorMsg", emailFormat);
+        setInnerText('emailErrorMsg', emailFormat);
       } else {
-        setInnerText("emailErrorMsg", "");
+        setInnerText('emailErrorMsg', '');
       }
       // Si un des formats n'est pas respecté, retourne false, true sinon.
       if (
@@ -325,7 +413,7 @@ if (document.location.pathname.endsWith("/front/html/cart.html")) {
     // Le panier n'existe pas :
     else {
       alert(
-        "Votre panier est vide !\nAjouter des articles avant de commander."
+        'Votre panier est vide !\nAjouter des articles avant de commander.'
       );
       return false;
     }
@@ -360,10 +448,10 @@ if (document.location.pathname.endsWith("/front/html/cart.html")) {
       contact: datas,
       products: getIDs(),
     };
-    return await fetch("http://localhost:3000/api/products/order", {
-      method: "POST",
+    return await fetch('http://localhost:3000/api/products/order', {
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify(dataToPost),
     }).then(function (data) {
@@ -371,28 +459,29 @@ if (document.location.pathname.endsWith("/front/html/cart.html")) {
     });
   }
 
-  formDatas.addEventListener("submit", async function (evnmt) {
+  formDatas.addEventListener('submit', async function (evnmt) {
     // Empêche la page de se recharger :
     evnmt.preventDefault();
     // Récupère les valeurs des inputs dans un objet contact :
     const people = {
-      firstName: getValue("firstName"),
-      lastName: getValue("lastName"),
-      address: getValue("address"),
-      city: getValue("city"),
-      email: getValue("email"),
+      firstName: getValue('firstName'),
+      lastName: getValue('lastName'),
+      address: getValue('address'),
+      city: getValue('city'),
+      email: getValue('email'),
     };
     // Validation des entrées de l'utilisateur :
     if (checkEntries(people)) {
-      const confirmationDatas = await sendDatas(people);
-      const orderId = confirmationDatas.orderId;
-      document.location.href = "./confirmation.html?orderid=" + orderId;
+      // const confirmationDatas = await sendDatas(people);
+      // const orderId = confirmationDatas.orderId;
+      const orderId = '12qeg54erg1re5g4erg54rg1r';
+      document.location.href = './confirmation.html?orderid=' + orderId;
     }
   });
 } else {
   // Affichage de l'ID de commande :
   let searchParam = new URLSearchParams(new URL(document.location.href).search);
-  document.getElementById("orderId").innerText =
-    "\n\n" + searchParam.get("orderid");
+  document.getElementById('orderId').innerText =
+    '\n\n' + searchParam.get('orderid');
   localStorage.clear();
 }
